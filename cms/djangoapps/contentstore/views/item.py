@@ -14,12 +14,16 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.decorators.http import require_http_methods
 
+from xblock.fields import Scope
 from xblock.fragment import Fragment
+from xblock.core import XBlock
 
 import xmodule.x_module
 from xmodule.modulestore.django import modulestore, loc_mapper
-from xmodule.modulestore.inheritance import own_metadata
 from xmodule.modulestore.exceptions import ItemNotFoundError, InvalidLocationError
+from xmodule.modulestore.inheritance import own_metadata
+from xmodule.modulestore.locator import BlockUsageLocator
+from xmodule.x_module import prefer_xmodules
 
 from util.json_request import expect_json, JsonResponse
 from util.string_utils import str_to_bool
@@ -30,9 +34,6 @@ from ..utils import get_modulestore
 
 from .access import has_access
 from .helpers import _xmodule_recurse
-from xmodule.x_module import XModuleDescriptor
-from xmodule.modulestore.locator import BlockUsageLocator
-from xblock.fields import Scope
 from contentstore.views.preview import get_preview_fragment
 from edxmako.shortcuts import render_to_string
 from models.settings.course_grading import CourseGradingModel
@@ -299,7 +300,7 @@ def _create_item(request):
     data = None
     template_id = request.json.get('boilerplate')
     if template_id is not None:
-        clz = XModuleDescriptor.load_class(category)
+        clz = XBlock.load_class(category, select=prefer_xmodules)
         if clz is not None:
             template = clz.get_template(template_id)
             if template is not None:
