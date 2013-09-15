@@ -821,6 +821,9 @@ INSTALLED_APPS = (
     # shopping cart
     'shoppingcart',
 
+    # payment with coupons
+    'coupons',
+
     # Notification preferences setting
     'notification_prefs',
 
@@ -891,3 +894,8 @@ if MITX_FEATURES.get('AUTH_USE_CAS'):
     )
     INSTALLED_APPS += ('django_cas',)
     MIDDLEWARE_CLASSES += ('django_cas.middleware.CASMiddleware',)
+
+####################### Stripe checkout ###############################
+
+STRIPE_KEY_PUBLIC = 'pk_test_W0ylESS65cR7UpewUNuI2k6o'
+STRIPE_KEY_SECRET = 'sk_test_TddMoykYgyC7rfxs13USIi0Y'

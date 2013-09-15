@@ -381,10 +381,15 @@ def change_enrollment(request):
 
         # If this course is available in multiple modes, redirect them to a page
         # where they can choose which mode they want.
-        available_modes = CourseMode.modes_for_course(course_id)
+        available_modes = CourseMode.modes_for_course_dict(course_id)
         if len(available_modes) > 1:
             return HttpResponse(
                 reverse("course_modes_choose", kwargs={'course_id': course_id})
+            )
+
+        if 'pay_with_coupon' in available_modes and not has_access(user, course, 'staff'):
+            return HttpResponse(
+                reverse("pay_with_coupon", kwargs={'course_id': course_id})
             )
 
         org, course_num, run = course_id.split("/")

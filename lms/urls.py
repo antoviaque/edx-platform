@@ -392,6 +392,11 @@ urlpatterns += (
     url(r'^shoppingcart/', include('shoppingcart.urls')),
 )
 
+# Coupons
+urlpatterns += (
+    url(r'^coupons/', include('coupons.urls')),
+)
+
 
 if settings.MITX_FEATURES.get('AUTH_USE_OPENID_PROVIDER'):
     urlpatterns += (

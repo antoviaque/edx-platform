@@ -668,6 +668,8 @@ class CourseEnrollment(models.Model):
     # list of possible values.
     mode = models.CharField(default="honor", max_length=100)
 
+    # The coupon used during enrollment, if any
+    coupon = models.ForeignKey('coupons.Coupon', null=True)
 
     class Meta:
         unique_together = (('user', 'course_id'),)

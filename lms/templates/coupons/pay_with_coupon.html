@@ -1,0 +1,142 @@
+<%! from django.utils.translation import ugettext as _ %>
+<%!
+  from django.conf import settings
+  from django.core.urlresolvers import reverse
+%>
+<%inherit file="../main.html" />
+
+<%block name="bodyclass">register verification-process step-select-track</%block>
+<%block name="title"><title>${_("Register for {} | Payment").format(course_name)}</title></%block>
+
+<%block name="js_extra">
+<script type="text/javascript" src="https://checkout.stripe.com/v2/checkout.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+  var updating = false,
+      delayedUpdate,
+      price = {
+        value: ${ price['value'] },
+        currency: "${ price['currency'] }"
+      },
+
+      addTokenToForm = function(res) {
+        var $input = $('<input type="hidden" id="payment_token" name="payment_token" />').val(res.id);
+        $('#enrollment-pay-form').append($input).submit();
+      },
+
+      showPaymentModal = function() {
+        StripeCheckout.open({
+          key:         "${settings.STRIPE_KEY_PUBLIC}",
+          address:     false,
+          amount:      price.value * 100,
+          currency:    price.currency,
+          name:        "Online Course",
+          description: "Enrollment for one session",
+          panelLabel:  "Pay",
+          token:       addTokenToForm
+        });
+      },
+
+      updatePrice = function(e) {
+        // Delay ajax call if one is already in progress
+        if(updating) {
+          if(delayedUpdate) {
+            clearTimeout(delayedUpdate);
+          };
+          delayedUpdate = setTimeout(function() { updatePrice(e); }, 100);
+          return;
+        };
+
+        updating = true;
+        $('#price-with-coupon').html('<i>Calculating...</i>');
+        $.ajax({
+          url: '/coupons/price',
+          type: 'GET',
+          data: {
+            course_id: '${course_id}',
+            coupon: $('#coupon').val()
+          },
+          dataType: 'json',
+          success: function(result){
+            price = result.price;
+            $('#price-with-coupon').html('$'+price.value+' '+price.currency);
+            updating = false;
+          },
+          error: function() {
+            price.value = 0;
+            $('#price-with-coupon').html('<i>Error - Please try a different code</i>');
+            updating = false;
+          }
+        });
+      };
+
+  $("#coupon").keyup(function(e) {
+    updatePrice(e);
+  }).bind("paste", function(e) {
+    // Catch mouse right-click paste
+    setTimeout(function() { updatePrice(e); }, 100);
+  });
+  
+  $('#pay-button').on('click', function(e) {
+    e.preventDefault();
+    showPaymentModal();
+  });
+});
+</script>
+</%block>
+
+<%block name="content">
+
+%if error:
+<div class="wrapper-msg wrapper-msg-error">
+  <div class=" msg msg-error">
+    <i class="msg-icon icon-warning-sign"></i>
+    <div class="msg-content">
+      <h3 class="title">${_("Sorry, there was an error when trying to register you")}</h3>
+      <div class="copy">
+        <p>${error}</p>
+      </div>
+    </div>
+  </div>
+</div>
+%endif
+
+<div class="container">
+  <section class="wrapper">
+
+    <%include file="/verify_student/_verification_header.html" args="course_name=course_name" />
+
+    <div class="wrapper-register-pay wrapper-content-main">
+      <article class="register-pay content-main">
+        <h3 class="title">${_("Payment")}</h3>
+
+        <form class="form-register-choose" method="post" name="enrollment-pay-form" id="enrollment-pay-form">
+
+          <div class="register-choice register-choice-certificate">
+            <div class="wrapper-copy">
+              <span class="deco-ribbon"></span>
+              <h4 class="title">${_("Enrollment for one session")}</h4>
+              <div class="copy">
+                <p>${_("Price:")} <span id="price-with-coupon">$${price['value']} ${price['currency']}</span></p>
+                <p>Coupon code (if you have one):</p>
+                <input type="text" size="20" name="coupon" id="coupon" value=""/>
+              </div>
+            </div>
+
+            <ul class="list-actions">
+              <li class="action action-select">
+                <input id="pay-button" type="submit" name="mode" value="Pay" />
+              </li>
+            </ul>
+          </div>
+
+          <input type="hidden" name="csrfmiddlewaretoken" value="${ csrf_token }">
+        </form>
+      </article>
+    </div> <!-- /wrapper-content-main -->
+
+  </section>
+</div>
+</%block>
