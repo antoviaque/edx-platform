@@ -860,6 +860,9 @@ INSTALLED_APPS = (
 
     # Student Identity Verification
     'verify_student',
+
+    # Admin can login as a given user
+    'loginas',
 )
 
 ######################### MARKETING SITE ###############################

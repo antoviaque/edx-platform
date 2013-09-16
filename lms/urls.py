@@ -467,3 +467,9 @@ if settings.DEBUG:
 #Custom error pages
 handler404 = 'static_template_view.views.render_404'
 handler500 = 'static_template_view.views.render_500'
+
+# Admins can login as a given user
+urlpatterns += patterns('loginas.views',
+    url(r"^login/user/(?P<user_id>.+)/$", "user_login", name="loginas-user-login"),
+)
+
