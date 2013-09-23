@@ -23,7 +23,7 @@ from student.views import course_from_id
 
 # Functions ###################################################################
 
-def pay_with_token(user, course_id, token, coupon_name=None):
+def pay_with_token(user, course_id, token, coupon_name=''):
     """
     Process a pre-made Stripe payment token, including a coupon reduction
     """
@@ -69,7 +69,7 @@ class CouponCheckoutView(View):
     @method_decorator(login_required)
     def post(self, request, course_id):
         payment_token = request.POST.get('payment_token')
-        coupon_name = request.POST.get('coupon')
+        coupon_name = request.POST.get('coupon', '')
         user = request.user
         course = course_from_id(course_id)
 
