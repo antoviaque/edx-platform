@@ -8,6 +8,7 @@ from functools import partial
 from django.conf import settings
 from django.contrib.auth.models import Group
 
+from xblock.core import XBlock
 from xmodule.course_module import CourseDescriptor
 from xmodule.error_module import ErrorDescriptor
 from xmodule.modulestore import Location
@@ -75,6 +76,9 @@ def has_access(user, obj, action, course_context=None):
 
     if isinstance(obj, XModule):
         return _has_access_xmodule(user, obj, action, course_context)
+
+    if isinstance(obj, XBlock):
+        return True
 
     if isinstance(obj, Location):
         return _has_access_location(user, obj, action, course_context)
