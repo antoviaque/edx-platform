@@ -877,7 +877,8 @@ def create_account(request, post_override=None):
             js['field'] = a
             return HttpResponse(json.dumps(js))
 
-    if post_vars.get('honor_code', 'false') != u'true':
+    if settings.REGISTRATION_EXTRA_FIELDS['honor_code'] == 'required' and \
+            post_vars.get('honor_code', 'false') != u'true':
         js['value'] = _("To enroll, you must follow the honor code.").format(field=a)
         js['field'] = 'honor_code'
         return HttpResponse(json.dumps(js))
@@ -900,18 +901,30 @@ def create_account(request, post_override=None):
     # this is a good idea
     # TODO: Check password is sane
 
-    required_post_vars = ['username', 'email', 'name', 'password', 'terms_of_service', 'honor_code']
-    if tos_not_required:
-        required_post_vars = ['username', 'email', 'name', 'password', 'honor_code']
+    required_post_vars = ['username', 'email', 'name', 'password']
+    required_post_vars += [fieldname for fieldname, val in settings.REGISTRATION_EXTRA_FIELDS.items()
+                           if val == 'required']
+    if not tos_not_required:
+        required_post_vars.append('terms_of_service')
 
     for a in required_post_vars:
-        if len(post_vars[a]) < 2:
-            error_str = {'username': 'Username must be minimum of two characters long.',
-                         'email': 'A properly formatted e-mail is required.',
-                         'name': 'Your legal name must be a minimum of two characters long.',
-                         'password': 'A valid password is required.',
-                         'terms_of_service': 'Accepting Terms of Service is required.',
-                         'honor_code': 'Agreeing to the Honor Code is required.'}
+        if a in ('gender', 'level_of_education'):
+            min_length = 1
+        else:
+            min_length = 2
+
+        if len(post_vars[a]) < min_length:
+            error_str = {'username': _('Username must be minimum of two characters long.'),
+                         'email': _('A properly formatted e-mail is required.'),
+                         'name': _('Your legal name must be a minimum of two characters long.'),
+                         'password': _('A valid password is required.'),
+                         'terms_of_service': _('Accepting Terms of Service is required.'),
+                         'honor_code': _('Agreeing to the Honor Code is required.'),
+                         'level_of_education': _('A level of education is required.'),
+                         'gender': _('Your gender is required'),
+                         'year_of_birth': _('Your year of birth is required'),
+                         'mailing_address': _('Your mailing address is required'),
+                         'goals': _('A description of your goals is required')}
             js['value'] = error_str[a]
             js['field'] = a
             return HttpResponse(json.dumps(js))
