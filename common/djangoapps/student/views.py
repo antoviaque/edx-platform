@@ -825,6 +825,8 @@ def _do_create_account(post_vars):
     profile.level_of_education = post_vars.get('level_of_education')
     profile.gender = post_vars.get('gender')
     profile.mailing_address = post_vars.get('mailing_address')
+    profile.city = post_vars.get('city')
+    profile.country = post_vars.get('country')
     profile.goals = post_vars.get('goals')
 
     try:
@@ -907,13 +909,13 @@ def create_account(request, post_override=None):
     if not tos_not_required:
         required_post_vars.append('terms_of_service')
 
-    for a in required_post_vars:
-        if a in ('gender', 'level_of_education'):
+    for field_name in required_post_vars:
+        if field_name in ('gender', 'level_of_education'):
             min_length = 1
         else:
             min_length = 2
 
-        if len(post_vars[a]) < min_length:
+        if len(post_vars[field_name]) < min_length:
             error_str = {'username': _('Username must be minimum of two characters long.'),
                          'email': _('A properly formatted e-mail is required.'),
                          'name': _('Your legal name must be a minimum of two characters long.'),
@@ -924,9 +926,11 @@ def create_account(request, post_override=None):
                          'gender': _('Your gender is required'),
                          'year_of_birth': _('Your year of birth is required'),
                          'mailing_address': _('Your mailing address is required'),
-                         'goals': _('A description of your goals is required')}
-            js['value'] = error_str[a]
-            js['field'] = a
+                         'goals': _('A description of your goals is required'),
+                         'city': _('A city is required'),
+                         'country': _('A country is required')}
+            js['value'] = error_str[field_name]
+            js['field'] = field_name
             return HttpResponse(json.dumps(js))
 
     try:
