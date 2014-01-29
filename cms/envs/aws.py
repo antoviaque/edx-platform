@@ -226,3 +226,5 @@ if len(MICROSITE_CONFIGURATION.keys()) > 0:
         VIRTUAL_UNIVERSITIES,
         microsites_root=path(MICROSITE_ROOT_DIR)
     )
+
+THEME_NAME = ENV_TOKENS.get('THEME_NAME', None)
