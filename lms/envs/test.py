@@ -266,6 +266,13 @@ PASSWORD_HASHERS = (
     # 'django.contrib.auth.hashers.CryptPasswordHasher',
 )
 
+############################### Splash screen ####################################
+
+SPLASH_SCREEN_COOKIE_NAME = 'edx_splash_screen'
+SPLASH_SCREEN_COOKIE_ALLOWED_VALUES = ['seen']
+SPLASH_SCREEN_UNAFFECTED_USERS = []
+SPLASH_SCREEN_REDIRECT_URL = 'http://edx.org'
+
 ################### Make tests quieter
 
 # OpenID spews messages like this to stderr, we don't need to see them:

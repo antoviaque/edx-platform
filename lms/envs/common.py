@@ -207,6 +207,9 @@ FEATURES = {
     # whether to use password policy enforcement or not
     'ENFORCE_PASSWORD_POLICY': False,
 
+    # Whether users should be redirected to a splash screen
+    'ENABLE_SPLASH_SCREEN': False,
+
     # Give course staff unrestricted access to grade downloads (if set to False,
     # only edX superusers can perform the downloads)
     'ALLOW_COURSE_STAFF_GRADE_DOWNLOADS': False,
@@ -619,6 +622,20 @@ PAID_COURSE_REGISTRATION_CURRENCY = ['usd', '$']
 # Members of this group are allowed to generate payment reports
 PAYMENT_REPORT_GENERATOR_GROUP = 'shoppingcart_report_access'
 
+############################### Splash screen ####################################
+
+SPLASH_SCREEN_COOKIE_NAME = 'edx_splash_screen'
+
+# The user cookie value must match one of the values to not be redirected to the
+# splash screen URL
+SPLASH_SCREEN_COOKIE_ALLOWED_VALUES = ['seen']
+
+# Users which should never be redirected (usernames)
+SPLASH_SCREEN_UNAFFECTED_USERS = []
+
+# The URL the users should be redirected to when they don't have the right cookie
+SPLASH_SCREEN_REDIRECT_URL = 'http://edx.org'
+
 ################################# open ended grading config  #####################
 
 #By setting up the default settings with an incorrect user name and password,
@@ -685,6 +702,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'track.middleware.TrackMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'splash.middleware.SplashMiddleware',
 
     'course_wiki.course_nav.Middleware',
 
@@ -1093,6 +1111,9 @@ INSTALLED_APPS = (
     'django_comment_client',
     'django_comment_common',
     'notes',
+
+    # Splash screen
+    'splash',
 
     # Monitoring
     'datadog',
