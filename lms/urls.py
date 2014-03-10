@@ -69,6 +69,16 @@ urlpatterns = ('',  # nopep8
     url(r'^embargo$', 'student.views.embargo', name="embargo"),
 )
 
+# OPEN EDX API
+if settings.FEATURES["API"]:
+    urlpatterns += (
+        url(r'^api/*$', include('system_manager.urls')),
+        url(r'^api/system/*$', include('system_manager.urls')),
+        url(r'^api/users/*', include('system_manager.users_urls')),
+        url(r'^api/groups/*', include('system_manager.groups_urls')),
+        url(r'^api/sessions/*', include('system_manager.sessions_urls')),
+    )
+
 # if settings.FEATURES.get("MULTIPLE_ENROLLMENT_ROLES"):
 urlpatterns += (
     url(r'^verify_student/', include('verify_student.urls')),

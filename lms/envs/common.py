@@ -246,6 +246,9 @@ FEATURES = {
     
     # Turn off Advanced Security by default
     'ADVANCED_SECURITY': False,
+
+    # Turn on/off the Open edX API
+    'API': True,
 }
 
 # Used for A/B testing
@@ -1200,6 +1203,8 @@ INSTALLED_APPS = (
 
     # Monitoring functionality
     'monitoring',
+    
+    'system_manager',
 )
 
 ######################### MARKETING SITE ###############################
