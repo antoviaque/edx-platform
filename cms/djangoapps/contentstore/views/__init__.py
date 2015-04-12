@@ -21,6 +21,7 @@ from .user import *
 from .tabs import *
 from .videos import *
 from .transcripts_ajax import *
+from .plugins import *
 try:
     from .dev import *
 except ImportError:

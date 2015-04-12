@@ -95,6 +95,9 @@
                   <li class="nav-item nav-course-settings-group-configurations">
                     <a href="${reverse('contentstore.views.group_configurations_list_handler', kwargs={'course_key_string': unicode(course_key)})}">${_("Group Configurations")}</a>
                   </li>
+                  <li class="nav-item nav-course-settings-plugins">
+                    <a href="${reverse('contentstore.views.plugins_handler', kwargs={'course_key_string': unicode(course_key)})}">${_("Plugins")}</a>
+                  </li>
                   <li class="nav-item nav-course-settings-advanced">
                     <a href="${advanced_settings_url}">${_("Advanced Settings")}</a>
                   </li>
