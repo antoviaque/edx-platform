@@ -148,7 +148,7 @@ from edxmako.shortcuts import marketing_link
           </span>
         % elif is_course_full:
           <span class="register disabled">
-            ${_("Course is full")}
+            ${_("Course is completely full!")}
           </span>
         % elif invitation_only and not can_enroll:
           <span class="register disabled">${_("Enrollment in this course is by invitation only")}</span>
